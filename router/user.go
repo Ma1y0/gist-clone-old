@@ -68,11 +68,30 @@ type logInInput struct {
 
 // Log In
 func handleLogInUserRoute(c *gin.Context) {
+	var body logInInput
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var user model.UserModel
+	if result := model.DB.Where("email = ?", body.Email).Find(&user); result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "User not found",
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user":  user,
+		"match": comapreHashAndPassword([]byte(body.Password), []byte(user.Password)),
+	})
 }
 
 func comapreHashAndPassword(password []byte, hash []byte) bool {
 	if err := bcrypt.CompareHashAndPassword(hash, password); err != nil {
-		log.Println(err)
 		return false
 	}
 

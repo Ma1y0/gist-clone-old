@@ -9,6 +9,7 @@ func ConstructRouter() *gin.Engine {
 	r.GET("/ping", handlePingRoute)
 	// User routes
 	r.POST("/user/register", handleUserRegisterRoute)
+	r.POST("/user/login", handleLogInUserRoute)
 
 	return r
 }
