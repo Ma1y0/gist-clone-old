@@ -17,5 +17,13 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+tmp/*
+tmp/
+tmp
 # Go workspace file
 go.work
+
+*.db
+*.db-journal
+
+gist-clone
