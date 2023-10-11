@@ -1,8 +1,8 @@
 package router
 
 import (
-	"log"
 	"net/http"
+	"net/mail"
 
 	"github.com/Ma1y0/gist-clone/model"
 	"github.com/gin-gonic/gin"
@@ -11,9 +11,9 @@ import (
 )
 
 type registerInput struct {
-	Username string
-	Password string
-	Email    string
+	Username string `binding:"required"`
+	Password string `binding:"required"`
+	Email    string `binding:"required"`
 }
 
 // Register a new user
@@ -23,6 +23,13 @@ func handleUserRegisterRoute(c *gin.Context) {
 	if err := c.BindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
+		})
+		return
+	}
+
+	if _, err := mail.ParseAddress(body.Email); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid email address",
 		})
 		return
 	}
@@ -62,8 +69,8 @@ func hashPassword(password []byte) (string, error) {
 }
 
 type logInInput struct {
-	Email    string
-	Password string
+	Email    string `binding:"required"`
+	Password string `binding:"required"`
 }
 
 // Log In
