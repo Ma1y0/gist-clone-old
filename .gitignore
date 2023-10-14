@@ -27,3 +27,5 @@ go.work
 *.db-journal
 
 gist-clone
+
+.env

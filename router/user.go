@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/mail"
 
+	"github.com/Ma1y0/gist-clone/helpers"
 	"github.com/Ma1y0/gist-clone/model"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -89,11 +90,29 @@ func handleLogInUserRoute(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "User not found",
 		})
+		return
 	}
 
+	if !comapreHashAndPassword([]byte(body.Password), []byte(user.Password)) {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Wrong email or password",
+		})
+		return
+	}
+
+	// Generates JWT and sends as cookie
+	jwt_token, err := helpers.GenerateJWT(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to assign a JWT",
+			"error":   err.Error(),
+		})
+	}
+
+	c.SetCookie("jwt", jwt_token, 3600, "/", "localhost", false, true)
+
 	c.JSON(http.StatusOK, gin.H{
-		"user":  user,
-		"match": comapreHashAndPassword([]byte(body.Password), []byte(user.Password)),
+		"user": user,
 	})
 }
 
