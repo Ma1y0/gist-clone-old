@@ -10,10 +10,14 @@ func ConstructRouter() *gin.Engine {
 
 	// Routes
 	r.GET("/ping", handlePingRoute)
+	r.GET("/secret", middleware.AuthMiddleware, secrets)
 	// User routes
 	r.POST("/user/register", handleUserRegisterRoute)
 	r.POST("/user/login", handleLogInUserRoute)
-	r.GET("/secret", middleware.AuthMiddleware, secrets)
+	r.GET("/user/:id", handleGetUsersGistsRoute)
+	// GIST routes
+	r.POST("/gist", middleware.AuthMiddleware, handleGistNewRoute)
+	r.GET("/gist/:id", HandleGetGistByIdRoute)
 
 	return r
 }

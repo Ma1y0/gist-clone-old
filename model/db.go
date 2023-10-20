@@ -13,7 +13,7 @@ func EstablishDBConnection() {
 		panic("Failed to open database")
 	}
 
-	db.AutoMigrate(&UserModel{})
+	db.AutoMigrate(&UserModel{}, &GistModel{})
 
 	DB = db
 }

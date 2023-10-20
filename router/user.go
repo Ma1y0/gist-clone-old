@@ -123,3 +123,22 @@ func comapreHashAndPassword(password []byte, hash []byte) bool {
 
 	return true
 }
+
+// Get users gists
+func handleGetUsersGistsRoute(c *gin.Context) {
+	id := c.Param("id")
+
+	var user model.UserModel
+	if result := model.DB.Where("id = ?", id).Find(&user); result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "User not found",
+			"error":   result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusFound, gin.H{
+		"message": "User found",
+		"user":    user,
+	})
+}

@@ -69,3 +69,22 @@ func VerifyJWT(tokenString string) (jwt.MapClaims, error) {
 
 	return claims, nil
 }
+
+func ExtractIdFromJWT(jwtToken any) (string, error) {
+	jwtMap, ok := jwtToken.(jwt.MapClaims)
+	if !ok {
+		return "", fmt.Errorf("JWT claims aren't a map")
+	}
+
+	userIDVal, ok := jwtMap["user_id"]
+	if !ok {
+		return "", fmt.Errorf("user_id not found in the map")
+	}
+
+	userID, ok := userIDVal.(string)
+	if !ok {
+		return "", fmt.Errorf("user_id value is not of type string")
+	}
+
+	return userID, nil
+}
